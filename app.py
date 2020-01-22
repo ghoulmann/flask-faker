@@ -61,12 +61,12 @@ def get_access_log():
 @app.route('/admin/users/')
 def fake_users():
     users = []
-    for i in range(14):
+    for i in range(15):
         try:
             a = Person()
         except IndexError:
             a = Person()
-        users.append(a.get_json_str())
+        users.append({a.username:a.get_json_str()})
         del a
     return render_template('list.html', list=users)
 #db.create_all()
