@@ -22,7 +22,8 @@ from datetime import timedelta, datetime
 
 @app.route('/')
 def welcome():
-    return "This is not for you"
+    message = "This is not for you"
+    return render_template('index.html', message = message)
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html', e=e)
