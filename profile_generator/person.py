@@ -21,18 +21,21 @@ class Person(Profile):
         self.username = self.fake.user_name()
         del(self.fake)
     def getLocation(self, part):
-        split_address = self.address[:-6].split("\n")
-        if part == "street":
-            return split_address[0]
-        elif part == "citystate":
-            return split_address[1]
-        elif part == "state":
-            citystate = split_address[1].split(', ')
-            return citystate[1]
-        elif part == "city":
-            citystate = split_address[1].split(',')
-            return citystate[0]
-        else:
+        try:
+            split_address = self.address[:-6].split("\n")
+            if part == "street":
+                return split_address[0]
+            elif part == "citystate":
+                return split_address[1]
+            elif part == "state":
+                citystate = split_address[1].split(', ')
+                return citystate[1]
+            elif part == "city":
+                citystate = split_address[1].split(',')
+                return citystate[0]
+            else:
+                pass
+        except IndexError:
             pass
     def get_json_str(self):
         return json.dumps(self.__dict__, indent=4)
