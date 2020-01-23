@@ -38,7 +38,19 @@ class Person(Profile):
         except IndexError:
             pass
     def get_json_str(self):
-        return json.dumps(self.__dict__, indent=4)
+        j = json.dumps(self.__dict__, indent=4)
+        return j
+    def json_out(self):
+        dt = {}
+        dt[self.username] = self.__dict__
+        #dt.update(vars(self))
+        #with open(path, '+w')as file:
+        #    json.dump(dt, file, indent=4)
+        #return dt
+        #print(type(dt))
+        #json_string = json.dumps(dt, indent=4)
+        return dt
+
     def write_json(self, path):
         dt = {}
         dt.update(vars(self))

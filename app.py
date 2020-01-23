@@ -4,8 +4,9 @@
 from flask import Flask
 
 app = Flask(__name__)
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
-from flask import render_template
+from flask import render_template, jsonify, redirect, url_for
 #from flask_appbuilder.models.sqla.interface import SQLAInterface
 #from flask_appbuilder import ModelView, ModelRestApi
 from log_generator import generate_access_log
@@ -14,11 +15,13 @@ from os.path import join
 #from random import randint
 from profile_generator import Person
 from datetime import timedelta, datetime
+import json
 
 
 """
     Application wide 404 error handler
 """
+
 
 @app.route('/')
 def welcome():
@@ -36,8 +39,8 @@ def make_access_log(entries):
     for entry in log_entries:
         fh.write(entry+"\r")
     fh.close()
-    return render_template('fake_access_log.html', log=log_entries)
-
+    #return render_template('fake_access_log.html', log=log_entries)
+    return redirect(url_for('get_access_log'))
 """View fake logs"""
 @app.route('/admin/log/')
 @app.route('/log/')
@@ -46,29 +49,31 @@ def get_access_log():
     infile = join('static/', 'fakeaccesslog.txt')
 
     fh = open(infile, 'r')
-    #log = fh.read()
-    log_entries = fh.readlines()
-    #log = fh.read()
+    #log_entries = fh.readlines()
+    log = fh.read()
     fh.close()
-    for i in log_entries:
-        if len(i) < 2:
-            log_entries.remove(i)
-        i = i.replace("\r", "").replace('\n', '').strip()
+    #for i in log_entries:
+    #    if len(i) < 2:
+    #        log_entries.remove(i)
+    #    i = i.replace("\r", "").replace('\n', '').strip()
 
 
-    return render_template('fake_access_log.html', log=log_entries)
+    return render_template('from_file.html', content=log)
 @app.route('/admin/account_dump/')
 @app.route('/admin/users/')
 def fake_users():
-    users = []
+    users = {}
     for i in range(15):
         try:
             a = Person()
         except IndexError:
             a = Person()
-        users.append({a.username:a.get_json_str()})
+        #users[a.username]=a.get_json_str()
+        users[a.username] = vars(a) #(a.__dict__, indent=4)
+        #users.update(a.json_out())
         del a
-    return render_template('list.html', list=users)
+    #return render_template('list.html', list = users.items())
+    return jsonify(users)
 #db.create_all()
 
 
